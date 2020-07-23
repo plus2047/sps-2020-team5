@@ -1,48 +1,51 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title> Music Converter </title>
-    <link rel="stylesheet" href="style.css">
-  </head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <title> Music Converter </title>
+        <link rel="stylesheet" href="style.css">
+        <script src="script.js"></script>
+    </head>
 
-  <body>
-    <h1>Music Converter</h1>
-    <h3>Try out our model! Have fun!</h3>
-    <label for="music">Upload a piece of music:</label>
-    <form action="#" method="POST" id="music-upload" class enctype="multipart/form-data">
-      
-      <input type="file" id="music" name="music">
-      
-      <select name="genre" id="genre">
-        <option value="">- Genre -</option>
-        <option value="1">Pop</option>
-        <option value="1">Folk</option>
-        <option value="1">Rock</option>
-        <option value="1">Jazz</option>
-      </select>
+    <body>
+        <div id="wrapper" class="black-overlay">
+        <div id="main">
+            <h1>Music Converter</h1>
+            <h3>Try out our model! Have fun!</h3>
+            <label for="music">Upload a piece of music:</label>
+            <form action="#" method="POST" id="music-upload" class enctype="multipart/form-data">
+                <input type="file" id="music" name="music" class="file" accept="audio/mpeg, audio/mp4" />
+                <select name="genre" id="genre">
+                    <option value="">- Genre -</option>
+                    <option value="1">Pop</option>
+                    <option value="1">Country</option>
+                    <option value="1">Rock</option>
+                    <option value="1">Jazz</option>
+                    <option value="1">R&B</option>
+                </select>
+                
+                <input type="submit" class="btn">
+            </form>
+            
 
-      <input type="submit" class="btn">
+            <button onclick="show()">Show result</button>
 
-    </form>
-
-    <audio controls="controls" height="100" width="100">
-      <source src="music/Red.mp3" type="audio/mp3" />
-    <embed height="100" width="100" src="music/Red.mp3" />
-    </audio>
-
-    
-
-      
-    
-    
-    
-        
-
-     <!-- Scripts -->
-    <script src="script.js"></script>
-
-    
-  </body>
+            <div id="showResult" style="display:none">
+                <div id="visualization">
+                    <img src="images/Taylor.jpg"/>
+                </div>
+                <div id="play">
+                    <audio controls="controls" height="100" width="100">
+                        <source src="music/Red.mp3" type="audio/mp3" />
+                        <embed height="100" width="100" src="music/Red.mp3" />
+                    </audio>
+                <div>
+                <div id="download">
+                    <a href="music/Red.mp3" download="Red.mp3" class="btn">Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
 </html>
