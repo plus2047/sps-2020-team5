@@ -1,0 +1,94 @@
+*{padding: 0; margin: 0; list-style: none;}
+
+.all{
+    width: 1000px; 
+    height: 300px; 
+    margin: 100px 
+    auto;
+}
+
+/*专辑盒子*/
+.total{
+    width: 400px; 
+    height: auto; 
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    position: relative;
+    color:#fff;
+    text-align: center;
+    overflow: hidden;
+}
+            
+.total img{
+    width: 100%;
+    transition:0.5s;
+}
+            
+/*伪元素遮罩*/
+.total:before{
+    content:""; 
+    width: 90%; 
+    height: 90%; 
+    background: rgba(70,70,70,0.6);
+    box-shadow: 0 0 5px rgba(0,0,0,0.5); 
+    position: absolute; 
+    left: 0; 
+    top:0; 
+    right: 0; 
+    bottom: 0; 
+    margin: auto;
+    z-index: 1;
+    transform: rotate(-45deg) scale(1.5);
+    opacity: 0;
+    transition:0.5s;
+}
+
+.total h3{
+    height:50px; 
+    line-height: 50px; 
+    font-size: 28px;
+}
+            
+.total p{
+    height:30px; 
+    line-height: 30px; 
+    font-size: 22px;
+}
+
+/*icon图标*/
+.total .icon{
+	width: 100px;
+    height: 100px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 1;
+    /*默认缩小*/
+    transform: scale(0);
+    /*添加过渡动画*/
+    transition:0.5s;
+}
+
+.total .iconfont{
+    width:40px;
+    line-height: 40px;
+    background:rgba(255,255,255,0.3);
+    display:inline-block;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    cursor: pointer;
+    transition:0.5s;
+}
+            
+.total:hover:before{
+    transform: rotate(0deg) scale(1); 
+    opacity: 1;
+}
+
+/*图标放大出现*/
+.total:hover .icon{
+    transform: scale(1);
+}

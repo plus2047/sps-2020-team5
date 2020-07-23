@@ -1,0 +1,75 @@
+@import url("https://fonts.googleapis.com/css?family=Merriweather:300,700,300italic,700italic|Source+Sans+Pro:900");
+
+body{
+	text-align: center;
+}
+body > * {
+	margin: 1rem;
+}
+body{
+	
+background: url("images/bg.jpg");
+background-attachment: fixed;
+background-size: 100%;
+text-align: center;
+padding: 6rem 4rem;
+color: #333;
+}
+
+
+#main {
+	background-color: rgba(255, 255, 255, 0.8);
+	width: 80%;
+	margin: 0 auto;
+	padding: 2rem;
+	outline: white 2px;
+	outline-offset: 4px;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Source Sans Pro", Helvetica, sans-serif;
+	line-height: 1.5;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	margin: 2rem;
+  }
+
+
+input[type="submit"],
+input[type="button"],
+select,
+button,
+.btn
+{
+	border: 0;
+	border-radius: 0;
+	cursor: pointer;
+	display: inline-block;
+	font-family: "Source Sans Pro", Helvetica, sans-serif;
+	font-size: 0.8rem;
+	letter-spacing: 0.075em;
+	height: 2rem;
+	width: 6rem;
+	line-height: 2rem;
+	padding: 0 0.5rem;
+	margin: 1rem 0.5rem;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	background-color: transparent;
+	box-shadow: inset 0 0 0 2px  #333;
+	color: #333;
+}
+
+.file{
+	height: 0;
+	width: 0;
+}
+
+#filename{
+	border: 0;
+	border-radius: 0;
+	line-height: 2rem;
+	height: 2rem;
+	width: 10rem;
+	box-shadow: inset 0 0 0 1px  #333;
+}
