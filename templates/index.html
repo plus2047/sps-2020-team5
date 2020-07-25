@@ -4,9 +4,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
         <title> Music Converter </title>
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="music.css">
-        <script src="script.js"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='music.css') }}">
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
     </head>
 
     <body>
@@ -36,11 +36,11 @@
                 <div id="showResult" style="display:none">
                     <ul>
                         <li class="total">
-                            <img id="visualization" src="images/Taylor.jpg"/>
+                            <img id="visualization" src="{{ url_for('static', filename='images/Taylor.jpg') }}"/>
                             <div class="icon">
                                 <div class="stop" id="off">
-                                    <img src="images/play.png" id="music-play-icon">
-                                    <audio id="audio" src="music/Red.mp3"></audio>
+                                    <img src="{{ url_for('static', filename='images/play.jpg') }}" id="music-play-icon">
+                                    <audio id="audio" src="{{ url_for('static', filename='music/Red.mp3') }}"></audio>
                                 </div>
                             </div>
                         </li>
