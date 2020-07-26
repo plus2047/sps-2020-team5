@@ -6,7 +6,6 @@ function musicUpload(event) {
     event.preventDefault();
 
     var formData = new FormData($("#music-upload")[0]);
-    console.log(formData)
 
     $.ajax({
         url: '/transform',
@@ -18,6 +17,7 @@ function musicUpload(event) {
             var response = JSON.parse(data)
             $("#visualization")[0].src = response.image + "?" + new Date().getTime();
             $("#audio")[0].src = response.music
+            show()
         }
      });
 }

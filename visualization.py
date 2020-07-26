@@ -7,7 +7,9 @@ import numpy as np
 
 def visualization(bytes, output_path):
     data, fs = soundfile.read(bytes)
-    plt_data = data[:, 0][::fs // 10]
+    if len(data.shape) > 1:
+        data = data[:, 0]
+    plt_data = data[::fs // 10]
     plt_lim = np.max(np.abs(plt_data)) * 1.1
     plt.figure()
     plt.plot(plt_data)
