@@ -10,7 +10,7 @@ app.config["MAX_CONTENT_LENGTH"] = 128 * 1024 * 1024  # 128M
 #music_upload_path = "upload/"
 
 # tmp file can only be stored in /tmp/ when deployed on google cloud. (otherwise, Datastore is recommended)
-tmp_folder = "tmp/"
+tmp_folder = "/tmp/"
 
 
 @app.route('/', methods=["GET"])
@@ -28,13 +28,13 @@ def tmp(path):
 def transform():
     file = flask.request.files["music"]
     filename = tmp_folder + file.filename
+    #if not os.path.isdir(tmp_folder):
+    #    os.mkdir(tmp_folder)
     file.save(filename)
-    if not os.path.isdir(tmp_folder):
-        os.mkdir(tmp_folder)
-    visualization.visualization(filename, "tmp/wav.png")
+    visualization.visualization(filename, "/tmp/wav.png")
 
     return json.dumps({
-        "image": "tmp/wav.png",
+        "image": "/tmp/wav.png",
         "music": "static/music/Red.mp3",
     })
 
