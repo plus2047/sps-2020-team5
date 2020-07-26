@@ -21,7 +21,7 @@ def index():
 @app.route('/tmp/<path:path>', methods=["GET"])
 def tmp(path):
     path = path.split("?")[0]
-    return flask.send_from_directory("tmp", path)
+    return flask.send_from_directory(tmp_folder, path)
 
 
 @app.route("/transform", methods=["POST"])
