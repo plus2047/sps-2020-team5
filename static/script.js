@@ -11,12 +11,12 @@ window.onload = function(){
         if(off.className == "play"){
             audio.pause(); 
             off.className="stop"; 
-            musiPlayIcon.src = "images/play.png";  
+            musiPlayIcon.src = "static/images/play.png";  
         }
         else if(off.className == "stop"){ 
             audio.play();
             off.className="play";  
-            musiPlayIcon.src = "images/pause.png"; 
+            musiPlayIcon.src = "static/images/pause.png"; 
         } 
     }
 }
