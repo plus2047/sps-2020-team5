@@ -39,4 +39,6 @@ window.onload = function(){
             musiPlayIcon.src = "static/images/pause.png"; 
         } 
     }
+
+
 }
