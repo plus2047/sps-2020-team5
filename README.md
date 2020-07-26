@@ -10,9 +10,9 @@ Install flask:
 
     pip install flask
 
-Then, `cd` into the root folder of this project (which contains `app.py`), and run command:
+Then, `cd` into the root folder of this project (which contains `main.py`), and run command:
 
-    flask run
+    FLASK_APP=main.py FLASK_ENV=development flask run
 
 Then a development server will start. It should host on http://localhost:5000.
 
@@ -27,6 +27,3 @@ In google cloud shell,  `cd` into the root folder of this project, and run comma
 Then, you can get the deploy link by running:
 
     gcloud app browse
-
-
-

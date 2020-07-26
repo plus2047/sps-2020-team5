@@ -1,7 +1,10 @@
 import flask
+import json
 
 app = flask.Flask(__name__)
 app.secret_key = "1238QWERTYUICVBNMFGHJ"  # random string
+app.config["MAX_CONTENT_LENGTH"] = 128 * 1024 * 1024  # 128M
+
 
 
 @app.route('/', methods=["GET"])
@@ -11,7 +14,13 @@ def index():
 
 @app.route("/transform", methods=["POST"])
 def transform():
-    return "API TRANSFORM"
+    file = flask.request.files["music"].read()
+
+    return json.dumps({
+        "image": "static/images/Taylor.jpg",
+        "music": "static/music/Red.mp3",
+        "file_length": len(file)
+    })
 
 
 if __name__ == '__main__':

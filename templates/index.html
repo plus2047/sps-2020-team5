@@ -6,6 +6,7 @@
         <title> Music Converter </title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='music.css') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script src="{{ url_for('static', filename='script.js') }}"></script>
     </head>
 
@@ -15,7 +16,8 @@
                 <h1>Music Converter</h1>
                 <h3>Try out our model! Have fun!</h3>
                 <label for="music">Upload a piece of music:</label>
-                <form action="" method="POST" id="music-upload" class enctype="multipart/form-data">
+
+                <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
                     <select name="genre" id="genre">
                         <option value="">- Genre -</option>
                         <option value="1">Pop</option>
@@ -26,11 +28,11 @@
                     </select>
                     <input type='text' name='textfield' id='filename' class='txt' />
                     <label class="btn" for="music">Choose File</label>
-                    <input type="file" id="music" name="music" class="file" accept="audio/mpeg, audio/mp4" onchange="document.getElementById('filename').value = this.value"/>
-                    <input type="submit" class="btn">
+                    <input type="file" id="music" name="music" class="file" accept="audio/mpeg, audio/mp4, audio/wav"
+                        onchange="document.getElementById('filename').value = this.value"/>
+                    <button type="submit" onclick="musicUpload(event)">Submit</button>
                 </form>
                 
-
                 <button onclick="show()">Show</button>
 
                 <div id="showResult" style="display:none">
