@@ -1,10 +1,12 @@
 import flask
 import json
+import visualization
 
 app = flask.Flask(__name__)
 app.secret_key = "1238QWERTYUICVBNMFGHJ"  # random string
 app.config["MAX_CONTENT_LENGTH"] = 128 * 1024 * 1024  # 128M
 
+music_upload_path = "upload/"
 
 
 @app.route('/', methods=["GET"])
@@ -14,12 +16,14 @@ def index():
 
 @app.route("/transform", methods=["POST"])
 def transform():
-    file = flask.request.files["music"].read()
+    file = flask.request.files["music"]
+    filename = music_upload_path + file.filename
+    file.save(filename)
+    visualization.visualization(filename, "static/images/wav.png")
 
     return json.dumps({
-        "image": "static/images/Taylor.jpg",
+        "image": "static/images/wav.png",
         "music": "static/music/Red.mp3",
-        "file_length": len(file)
     })
 
 

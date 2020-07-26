@@ -16,7 +16,7 @@ function musicUpload(event) {
         contentType: false, 
         success : function(data) {
             var response = JSON.parse(data)
-            $("#visualization")[0].src = response.image
+            $("#visualization")[0].src = response.image + "?" + new Date().getTime();
             $("#audio")[0].src = response.music
         }
      });
