@@ -6,7 +6,10 @@ app = flask.Flask(__name__)
 app.secret_key = "1238QWERTYUICVBNMFGHJ"  # random string
 app.config["MAX_CONTENT_LENGTH"] = 128 * 1024 * 1024  # 128M
 
-music_upload_path = "upload/"
+#music_upload_path = "upload/"
+
+# tmp file can only be stored in /tmp/ when deployed on google cloud. (otherwise, Datastore is recommended)
+music_upload_path = "/tmp/"
 
 
 @app.route('/', methods=["GET"])
@@ -19,10 +22,10 @@ def transform():
     file = flask.request.files["music"]
     filename = music_upload_path + file.filename
     file.save(filename)
-    visualization.visualization(filename, "static/images/wav.png")
+    visualization.visualization(filename, "/tmp/wav.png")
 
     return json.dumps({
-        "image": "static/images/wav.png",
+        "image": "/tmp/wav.png",
         "music": "static/music/Red.mp3",
     })
 
