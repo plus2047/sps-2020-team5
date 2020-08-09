@@ -7,15 +7,15 @@ function showResult() {
 function showCyclegan() {
     document.getElementById('cyclegan').style.display = 'block';
     document.getElementById('translation').style.display = 'none';
-    document.getElementById('upload').style.display = 'block';
-    document.getElementById('select').style.display = 'block';
+    document.getElementById('upload').style.display = 'none';
+    document.getElementById('select').style.display = 'none';
 }
 
 function showTranslation () {
     document.getElementById('cyclegan').style.display = 'none';
     document.getElementById('translation').style.display = 'block';
-    document.getElementById('upload').style.display = 'block';
-    document.getElementById('select').style.display = 'block';
+    document.getElementById('upload').style.display = 'none';
+    document.getElementById('select').style.display = 'none';
 }
 
 function showUpload() {
