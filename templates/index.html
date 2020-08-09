@@ -15,42 +15,56 @@
             <div id="main">
                 <h1>Music Converter</h1>
                 <h3>Try out our model! Have fun!</h3>
-                <label for="music">Upload a piece of music:</label>
 
-                <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
-                    <select name="genre" id="genre">
-                        <option value="">- Genre -</option>
-                        <option value="1">Pop</option>
-                        <option value="1">Country</option>
-                        <option value="1">Rock</option>
-                        <option value="1">Jazz</option>
-                        <option value="1">R&B</option>
-                    </select>
-                    <input type='text' name='textfield' id='filename' class='txt' />
-                    <label class="btn" for="music">Choose File</label>
-                    <input type="file" id="music" name="music" class="file" accept="audio/mpeg, audio/mp4, audio/wav"
-                        onchange="document.getElementById('filename').value = this.value"/>
-                    <button type="submit" onclick="musicUpload(event)">Submit</button>
-                </form>
-                
-                <button onclick="show()">Show</button>
+                <div id="cyclegan">
+                    <h2>Model I: CycleGAN<h2>
+                    <h4><label for="music">Upload a piece of music:</label><h4>
+                    
+                    <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
+                        <select name="srcGenre" id="srcGenre" onchange="setSrcMusic()">
+                            <option>- Source Genre -</option>
+                            <option>pop</option>
+                            <option>jazz</option>
+                            <option>classic</option>
+                        </select>
+                        <select name="" id="musicName" onchange="loadMidiUrl()"></select>
+                        
+                        <select name="tarGenre" id="tarGenre">
+                            <option value="">- Target Genre -</option>
+                            <option value="1">pop</option>
+                            <option value="1">jazz</option>
+                            <option value="1">classic</option>
+                        </select>
+                        <input type='text' name='textfield' id='filename' class='txt' />
+                        <label class="btn" for="music">Choose File</label>
+                        <input type="file" id="music" name="music" class="file" onchange="document.getElementById('filename').value = this.value"/>
+                        <br>
+                        <button type="submit" onclick="musicUpload(event)">Submit</button>
+                    </form>
 
-                <div id="showResult" style="display:none">
-                    <ul>
-                        <li class="total">
-                            <img id="visualization" src="{{ url_for('static', filename='images/Taylor.jpg') }}"/>
-                            <div class="icon">
-                                <div class="stop" id="off">
-                                    <img src="{{ url_for('static', filename='images/play.png') }}" id="music-play-icon">
-                                    <audio id="audio" src="{{ url_for('static', filename='music/Red.mp3') }}"></audio>
+                    <p>You can play the source music here!</p>
+                    <button onclick="playMidi()">Play</button>
+                    <button onclick="stopMidi()">Pause</button>
+                    
+                    <button onclick="show()">Show</button>
+                    <div id="showResult" style="display:none">
+                        <ul>
+                            <li class="total">
+                                <img id="visualization" src="{{ url_for('static', filename='images/Taylor.jpg') }}"/>
+                                <div class="icon">
+                                    <div class="pause" id="off" onclick="playPause()">
+                                        <img src="{{ url_for('static', filename='images/play.png') }}" id="music-play-icon">
+                                        <audio id="audio" src="{{ url_for('static', filename='music/Red.mp3') }}"></audio>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                    </ul>
-                    <div id="download">
-                        <button onclick="download()">Download</button>
+                            </li>
+                        </ul>
+                        <div id="download">
+                            <button onclick="download()">Download</button>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </body>
