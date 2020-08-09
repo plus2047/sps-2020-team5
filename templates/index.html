@@ -15,38 +15,68 @@
             <div id="main">
                 <h1>Music Converter</h1>
                 <h3>Try out our model! Have fun!</h3>
+                <p>Step 1: Choose the model you want to use.</p>
+                <button id="chooseCyclegan" onclick="showCyclegan()">Symbolic Music Genre Transfer with CycleGAN</button>
+                <button id="chooseTranslation" onclick="showTranslation()">SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</button>
 
-                <div id="cyclegan">
-                    <h2>Model I: CycleGAN<h2>
-                    <h4><label for="music">Upload a piece of music:</label><h4>
-                    
-                    <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
-                        <select name="srcGenre" id="srcGenre" onchange="setSrcMusic()">
-                            <option>- Source Genre -</option>
-                            <option>pop</option>
-                            <option>jazz</option>
-                            <option>classic</option>
-                        </select>
-                        <select name="" id="musicName" onchange="loadMidiUrl()"></select>
-                        
-                        <select name="tarGenre" id="tarGenre">
-                            <option value="">- Target Genre -</option>
-                            <option value="1">pop</option>
-                            <option value="1">jazz</option>
-                            <option value="1">classic</option>
-                        </select>
-                        <input type='text' name='textfield' id='filename' class='txt' />
-                        <label class="btn" for="music">Choose File</label>
-                        <input type="file" id="music" name="music" class="file" onchange="document.getElementById('filename').value = this.value"/>
+                <div id="cyclegan" style="display:none">
+                    <h2>Symbolic Music Genre Transfer with CycleGAN</h2>
+                    <p>Step 2: You can upload a piece of music in MIDI format, or select one in our datasets.</p>
+                    <button id="chooseUpload" onclick="showUpload()">upload</button>
+                    <button id="chooseSelect" onclick="showSelect()">select</button>
+
+                    <div id="upload" style="display:none">
+                        <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
+                            <select name="srcGenre" id="srcGenre">
+                                <option>- Source Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+
+                            <select name="tarGenre" id="tarGenre">
+                                <option>- Target Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+
+                            <input type='text' name='textfield' id='filename' class='txt' />
+                            <label class="btn" for="music">Choose File</label>
+                            <input type="file" id="music" name="music" class="file" onchange="document.getElementById('filename').value = this.value"/>
+                            <br>
+                            <button type="submit" onclick="musicUpload(event)">Submit</button>
+                        </form>
                         <br>
-                        <button type="submit" onclick="musicUpload(event)">Submit</button>
-                    </form>
+                        <button onclick="showResult()">Show</button>
+                    </div>
 
-                    <p>You can play the source music here!</p>
-                    <button onclick="playMidi()">Play</button>
-                    <button onclick="stopMidi()">Pause</button>
-                    
-                    <button onclick="show()">Show</button>
+                    <div id="select" style="display:none">
+                        <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
+                            <select name="srcGenre" id="srcGenre" onchange="setSrcMusic()">
+                                <option>- Source Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+                            <select name="" id="musicName" onchange="loadMidiUrl()"></select>
+                            
+                            <select name="tarGenre" id="tarGenre">
+                                <option>- Target Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+                            
+                            <button type="submit" onclick="musicUpload(event)">Submit</button>
+                        </form>
+                        <p>You can play the chosen music here!</p>
+                        <button onclick="playMidi()">Play</button>
+                        <button onclick="stopMidi()">Pause</button>
+                        <br>
+                        <button onclick="showResult()">Show</button>
+                    </div>
+
                     <div id="showResult" style="display:none">
                         <ul>
                             <li class="total">
@@ -65,6 +95,10 @@
                     </div>
                 </div>
 
+                <div id="translation" style="display:none">
+                    <h2>SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</h2>
+                </div>
+                
             </div>
         </div>
     </body>

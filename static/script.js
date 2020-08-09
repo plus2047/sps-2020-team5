@@ -1,8 +1,33 @@
 document.write("<script language=javascript src='static/midi.js'></script>");
 
-function show () {
-    document.getElementById('showResult').style.display = 'block'
+function showResult() {
+    document.getElementById('showResult').style.display = 'block';
 }
+
+function showCyclegan() {
+    document.getElementById('cyclegan').style.display = 'block';
+    document.getElementById('translation').style.display = 'none';
+    document.getElementById('upload').style.display = 'block';
+    document.getElementById('select').style.display = 'block';
+}
+
+function showTranslation () {
+    document.getElementById('cyclegan').style.display = 'none';
+    document.getElementById('translation').style.display = 'block';
+    document.getElementById('upload').style.display = 'block';
+    document.getElementById('select').style.display = 'block';
+}
+
+function showUpload() {
+    document.getElementById('upload').style.display = 'block';
+    document.getElementById('select').style.display = 'none';
+}
+
+function showSelect() {
+    document.getElementById('upload').style.display = 'none';
+    document.getElementById('select').style.display = 'block';
+}
+
 
 var genreList=['- Source Genre -', 'pop','jazz','classic'];
 var genreMusicList=[[],['Aaliyah_-_Try_Again'], ['2_of_a_kind_jp'], ['Menuet']];
@@ -10,13 +35,13 @@ var genreMusicList=[[],['Aaliyah_-_Try_Again'], ['2_of_a_kind_jp'], ['Menuet']];
 function getSrcMusic(){
     for (var i = 0; i < 3; ++i) {
         var path = "static/music/" + genreList[i] + "/";
-        // todo：获取文件夹下所有的文件名，js在Chrome无法完成
+        // todo：获取文件夹下所有的文件名，js在Chrome无法完成，应该要后端获取
     }
 }
 
 // 加载所有类型下的音乐文件
 function setSrcMusic(){
-    var select = document.getElementById("srcGenre"); //获取选中的类型
+    var select = document.getElementById("srcGenre"); 
     var musicList = genreMusicList[select.selectedIndex];
     document.getElementById("musicName").innerHTML="<option>- Source Music -</option>";
     for(var i = 0; i < musicList.length; i++){
