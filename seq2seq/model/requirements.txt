@@ -1,0 +1,13 @@
+coloredlogs==10.0
+Cython==0.29
+matplotlib==3.0.2
+mido==1.2.9
+museflow @ git+https://github.com/cifkao/museflow@001d7d70416f69565be4874ffe4771a693b9a57b
+numpy==1.14.5
+pandas==0.24.1
+pretty-midi==0.2.8
+PyYAML==5.1
+scipy==1.2.0
+scikit-learn==0.20.1
+tensorboard==1.10.0
+tensorflow-gpu==1.10.0
