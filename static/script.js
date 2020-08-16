@@ -1,34 +1,5 @@
 document.write("<script language=javascript src='static/midi.js'></script>");
 
-function showResult() {
-    document.getElementById('showResult').style.display = 'block';
-}
-
-function showCyclegan() {
-    document.getElementById('cyclegan').style.display = 'block';
-    document.getElementById('translation').style.display = 'none';
-    document.getElementById('upload').style.display = 'none';
-    document.getElementById('select').style.display = 'none';
-}
-
-function showTranslation () {
-    document.getElementById('cyclegan').style.display = 'none';
-    document.getElementById('translation').style.display = 'block';
-    document.getElementById('upload').style.display = 'none';
-    document.getElementById('select').style.display = 'none';
-}
-
-function showUpload() {
-    document.getElementById('upload').style.display = 'block';
-    document.getElementById('select').style.display = 'none';
-}
-
-function showSelect() {
-    document.getElementById('upload').style.display = 'none';
-    document.getElementById('select').style.display = 'block';
-}
-
-
 var genreList=['- Source Genre -', 'pop','jazz','classic'];
 var genreMusicList=[[],['Aaliyah_-_Try_Again'], ['2_of_a_kind_jp'], ['Menuet']];
 
@@ -40,23 +11,94 @@ function getSrcMusic(){
 }
 
 // 加载所有类型下的音乐文件
-function setSrcMusic(){
-    var select = document.getElementById("srcGenre"); 
+function setSrcMusic(srcGenre, musicName){
+    var select = document.getElementById(srcGenre); 
     var musicList = genreMusicList[select.selectedIndex];
-    document.getElementById("musicName").innerHTML="<option>- Source Music -</option>";
+    document.getElementById(musicName).innerHTML="<option>- Source Music -</option>";
     for(var i = 0; i < musicList.length; i++){
         var option = document.createElement("option");
         option.text=musicList[i];
-        document.getElementById("musicName").add(option);
+        document.getElementById(musicName).add(option);
     }
 }
 
 
-function musicUpload(event) {
+function musicUpload(event, divName) {
+    // formData: 
+    //      model(cyclegan/rnn),
+    //      type(select/upload),
+    //      srcGenre(pop/jazz/classic),
+    //      tarGenre(pop/jazz/classic)
+    //      如果type == "upload"，则是file，表示上传的文件; 如果type == "select"，则是filePath，表示选择的文件路径
     event.preventDefault();
 
-    var formData = new FormData($("#music-upload")[0]);
+    var formData = new FormData();
+    if (divName == "music-upload-cyclegan"){
+        formData.append("model", "cyclegan");
+        formData.append("type", "upload");
 
+        var srcSelect = document.getElementById("srcGenre-upload-cyclegan");
+        var tarSelect = document.getElementById("tarGenre-upload-cyclegan");
+        var srcOptions = srcSelect.options;
+        var tarOptions = tarSelect.options;
+        var srcGenre = srcOptions[srcSelect.selectedIndex].text;
+        var tarGenre = tarOptions[tarSelect.selectedIndex].text;
+        formData.append("srcGenre", srcGenre);
+        formData.append("tarGenre", tarGenre);
+
+        var fileObj = document.getElementById("file-upload-cyclegan").files[0];
+        formData.append("file", fileObj);
+    }
+    else if (divName == "music-select-cyclegan"){
+        formData.append("model", "cyclegan");
+        formData.append("type", "select");
+
+        var srcSelect = document.getElementById("srcGenre-select-cyclegan");
+        var tarSelect = document.getElementById("tarGenre-select-cyclegan");
+        var srcOptions = srcSelect.options;
+        var tarOptions = tarSelect.options;
+        var srcGenre = srcOptions[srcSelect.selectedIndex].text;
+        var tarGenre = tarOptions[tarSelect.selectedIndex].text;
+        formData.append("srcGenre", srcGenre);
+        formData.append("tarGenre", tarGenre);
+        formData.append("filePath", "static/music/" + srcGenre + "/" + tarGenre  + ".mid");
+    }
+    else if (divName == "music-upload-rnn"){
+        formData.append("model", "rnn");
+        formData.append("type", "upload");
+
+        var srcSelect = document.getElementById("srcGenre-upload-rnn");
+        var tarSelect = document.getElementById("tarGenre-upload-rnn");
+        var srcOptions = srcSelect.options;
+        var tarOptions = tarSelect.options;
+        var srcGenre = srcOptions[srcSelect.selectedIndex].text;
+        var tarGenre = tarOptions[tarSelect.selectedIndex].text;
+        formData.append("srcGenre", srcGenre);
+        formData.append("tarGenre", tarGenre);
+
+        var fileObj = document.getElementById("file-upload-rnn").files[0];
+        formData.append("file", fileObj);
+    }
+    else if (divName == "music-select-rnn"){
+        formData.append("model", "rnn");
+        formData.append("type", "select");
+
+        var srcSelect = document.getElementById("srcGenre-select-rnn");
+        var tarSelect = document.getElementById("tarGenre-select-rnn");
+        var srcOptions = srcSelect.options;
+        var tarOptions = tarSelect.options;
+        var srcGenre = srcOptions[srcSelect.selectedIndex].text;
+        var tarGenre = tarOptions[tarSelect.selectedIndex].text;
+        formData.append("srcGenre", srcGenre);
+        formData.append("tarGenre", tarGenre);
+        formData.append("filePath", "static/music/" + srcGenre + "/" + tarGenre  + ".mid");
+    }
+    /*
+    for (var key of formData.keys()) {
+        console.log("key:" + key + " value:" + formData.get(key));
+    }
+    */
+    
     $.ajax({
         url: '/transform',
         type: 'post',
@@ -70,6 +112,7 @@ function musicUpload(event) {
             show()
         }
      });
+     
 }
 
 function playPause(){
@@ -88,9 +131,9 @@ function playPause(){
     }
 }
 
-function loadMidiUrl(){
-    var genre = document.getElementById("srcGenre");
-    var music = document.getElementById("musicName");
+function loadMidiUrl(srcGenre, musicName){
+    var genre = document.getElementById(srcGenre);
+    var music = document.getElementById(musicName);
     var musicList = genreMusicList[genre.selectedIndex];
     path = "static/music/" + genreList[genre.selectedIndex] + 
         '/' + musicList[music.selectedIndex-1] + '.mid';
@@ -98,38 +141,65 @@ function loadMidiUrl(){
     synth.loadMIDIUrl(path);
 }
 
+function showResult() {
+    document.getElementById('showResult').style.display = 'block';
+}
+
+function showCyclegan() {
+    document.getElementById('cyclegan').style.display = 'block';
+    document.getElementById('rnn').style.display = 'none';
+    document.getElementById('uploadCyclegan').style.display = 'none';
+    document.getElementById('selectCyclegan').style.display = 'none';
+    document.getElementById('uploadRnn').style.display = 'none';
+    document.getElementById('selectRnn').style.display = 'none';
+}
+
+function showRnn() {
+    document.getElementById('cyclegan').style.display = 'none';
+    document.getElementById('rnn').style.display = 'block';
+    document.getElementById('uploadCyclegan').style.display = 'none';
+    document.getElementById('selectCyclegan').style.display = 'none';
+    document.getElementById('uploadRnn').style.display = 'none';
+    document.getElementById('selectRnn').style.display = 'none';
+}
+
+function showUploadCyclegan() {
+    document.getElementById('uploadCyclegan').style.display = 'block';
+    document.getElementById('selectCyclegan').style.display = 'none';
+}
+function showUploadRnn() {
+    document.getElementById('uploadRnn').style.display = 'block';
+    document.getElementById('selectRnn').style.display = 'none';
+}
+
+function showSelectCyclegan() {
+    document.getElementById('uploadCyclegan').style.display = 'none';
+    document.getElementById('selectCyclegan').style.display = 'block';
+}
+function showSelectRnn() {
+    document.getElementById('uploadRnn').style.display = 'none';
+    document.getElementById('selectRnn').style.display = 'block';
+}
 
 // 播放Midi
 function playMidi(){
-  synth.playMIDI();
+    synth.playMIDI();
 }
 
 function stopMidi(){
-  synth.stopMIDI();
+    synth.stopMIDI();
 }
 
 function SetProgram(p){
-  synth.send([0xc0,p]);
+    synth.send([0xc0,p]);
 }
 
 function Init(){
-  synth=new WebAudioTinySynth({voices:64});
-  for(var i=0;i<128;++i){
-    var o=document.createElement("option");
-    o.innerHTML=synth.getTimbreName(0,i);
-    document.getElementById("prog").appendChild(o);
-  }
-  setInterval(function(){
-    var st=synth.getPlayStatus();
-    document.getElementById("status").innerHTML="Play:"+st.play+"  Pos:"+st.curTick+"/"+st.maxTick;
-  },100);
+    synth=new WebAudioTinySynth({voices:64});
+    setInterval(function(){
+        var st=synth.getPlayStatus();
+        //document.getElementById("status").innerHTML="Play:"+st.play+"  Pos:"+st.curTick+"/"+st.maxTick;
+    },100);
 }
 
-function Test(){
-  var o=synth.getAudioContext().createOscillator();
-  o.connect(synth.getAudioContext().destination);
-  o.start(0);
-  o.stop(synth.getAudioContext().currentTime+1);
-  console.log(synth)
-}
 window.onload=Init;
