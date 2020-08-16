@@ -2,6 +2,12 @@
 upload
 tmp
 
+cyclegan/checkpoint/**/*.data-00000-of-00001
+cyclegan/checkpoint/**/*.index
+cyclegan/checkpoint/**/*.meta
+
+cyclegan/datasets/*/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
