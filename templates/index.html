@@ -15,42 +15,90 @@
             <div id="main">
                 <h1>Music Converter</h1>
                 <h3>Try out our model! Have fun!</h3>
-                <label for="music">Upload a piece of music:</label>
+                <p>Step 1: Choose the model you want to use.</p>
+                <button id="chooseCyclegan" onclick="showCyclegan()">Symbolic Music Genre Transfer with CycleGAN</button>
+                <button id="chooseTranslation" onclick="showTranslation()">SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</button>
 
-                <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
-                    <select name="genre" id="genre">
-                        <option value="">- Genre -</option>
-                        <option value="1">Pop</option>
-                        <option value="1">Country</option>
-                        <option value="1">Rock</option>
-                        <option value="1">Jazz</option>
-                        <option value="1">R&B</option>
-                    </select>
-                    <input type='text' name='textfield' id='filename' class='txt' />
-                    <label class="btn" for="music">Choose File</label>
-                    <input type="file" id="music" name="music" class="file" accept="audio/mpeg, audio/mp4, audio/wav"
-                        onchange="document.getElementById('filename').value = this.value"/>
-                    <button type="submit" onclick="musicUpload(event)">Submit</button>
-                </form>
-                
-                <button onclick="show()">Show</button>
+                <div id="cyclegan" style="display:none">
+                    <h2>Symbolic Music Genre Transfer with CycleGAN</h2>
+                    <p>Step 2: You can upload a piece of music in MIDI format, or select one in our datasets.</p>
+                    <button id="chooseUpload" onclick="showUpload()">upload</button>
+                    <button id="chooseSelect" onclick="showSelect()">select</button>
 
-                <div id="showResult" style="display:none">
-                    <ul>
-                        <li class="total">
-                            <img id="visualization" src="{{ url_for('static', filename='images/Taylor.jpg') }}"/>
-                            <div class="icon">
-                                <div class="stop" id="off">
-                                    <img src="{{ url_for('static', filename='images/play.png') }}" id="music-play-icon">
-                                    <audio id="audio" src="{{ url_for('static', filename='music/Red.mp3') }}"></audio>
+                    <div id="upload" style="display:none">
+                        <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
+                            <select name="srcGenre" id="srcGenre">
+                                <option>- Source Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+
+                            <select name="tarGenre" id="tarGenre">
+                                <option>- Target Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+
+                            <input type='text' name='textfield' id='filename' class='txt' />
+                            <label class="btn" for="music">Choose File</label>
+                            <input type="file" id="music" name="music" class="file" onchange="document.getElementById('filename').value = this.value"/>
+                            <br>
+                            <button type="submit" onclick="musicUpload(event)">Submit</button>
+                        </form>
+                        <br>
+                        <button onclick="showResult()">Show</button>
+                    </div>
+
+                    <div id="select" style="display:none">
+                        <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
+                            <select name="srcGenre" id="srcGenre" onchange="setSrcMusic()">
+                                <option>- Source Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+                            <select name="" id="musicName" onchange="loadMidiUrl()"></select>
+                            
+                            <select name="tarGenre" id="tarGenre">
+                                <option>- Target Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+                            
+                            <button type="submit" onclick="musicUpload(event)">Submit</button>
+                        </form>
+                        <p>You can play the chosen music here!</p>
+                        <button onclick="playMidi()">Play</button>
+                        <button onclick="stopMidi()">Pause</button>
+                        <br>
+                        <button onclick="showResult()">Show</button>
+                    </div>
+
+                    <div id="showResult" style="display:none">
+                        <ul>
+                            <li class="total">
+                                <img id="visualization" src="{{ url_for('static', filename='images/Taylor.jpg') }}"/>
+                                <div class="icon">
+                                    <div class="pause" id="off" onclick="playPause()">
+                                        <img src="{{ url_for('static', filename='images/play.png') }}" id="music-play-icon">
+                                        <audio id="audio" src="{{ url_for('static', filename='music/Red.mp3') }}"></audio>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                    </ul>
-                    <div id="download">
-                        <button onclick="download()">Download</button>
+                            </li>
+                        </ul>
+                        <div id="download">
+                            <button onclick="download()">Download</button>
+                        </div>
                     </div>
                 </div>
+
+                <div id="translation" style="display:none">
+                    <h2>SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</h2>
+                </div>
+                
             </div>
         </div>
     </body>

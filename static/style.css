@@ -48,7 +48,7 @@ button,
 	font-size: 0.8rem;
 	letter-spacing: 0.075em;
 	height: 2rem;
-	width: 6rem;
+	width: auto;
 	line-height: 2rem;
 	padding: 0 0.5rem;
 	margin: 1rem 0.5rem;
