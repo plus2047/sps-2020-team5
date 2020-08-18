@@ -11,7 +11,7 @@ import numpy as np
 import pretty_midi as pm
 import copy
 import config
-import write_midi
+from . import write_midi
 # from dataprocessing import select_instrument, piano_roll_to_pretty_midi
 import tensorflow as tf
 try:

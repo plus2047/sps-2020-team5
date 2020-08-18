@@ -1,11 +1,13 @@
-from model import cyclegan
-from main import process_args
+from .model import cyclegan
+from .main import process_args
 import tensorflow as tf
 
 
 def get_all_args():  # get all supported model config
+    basic_args = process_args()
+    basic_args.checkpoint_dir = "cyclegan/checkpoint/JC_J2JC_C_2020-08-03_base_0.0/"
     return {
-        "jazz_classic": process_args(),
+        "jazz_classic": basic_args,
     }
 
 

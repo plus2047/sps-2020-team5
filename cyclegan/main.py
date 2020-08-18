@@ -1,12 +1,14 @@
-import argparse
 import os
 import tensorflow as tf
-from model import cyclegan
-from style_classifier import Classifer
+from .model import cyclegan
+from .style_classifier import Classifer
 tf.set_random_seed(19)
 # os.environ["CUDA_VISIBLE_DEVICES"] = os.environ['SGE_GPU']
 
-def process_args():
+
+def process_args_argparse():
+    # argparse cannot working with flask
+    import argparse
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--dataset_dir', dest='dataset_dir', default='JAZZ2ROCK', help='path of the dataset')
     parser.add_argument('--dataset_A_dir', dest='dataset_A_dir', default='JC_J', help='path of the dataset of domain A')
@@ -41,16 +43,56 @@ def process_args():
     parser.add_argument('--use_lsgan', dest='use_lsgan', type=bool, default=False, help='gan loss defined in lsgan')
     parser.add_argument('--max_size', dest='max_size', type=int, default=50, help='max size of image pool, 0 means do not use image pool')
     parser.add_argument('--sigma_c', dest='sigma_c', type=float, default=1.0, help='sigma of gaussian noise of classifiers')
-    parser.add_argument('--sigma_d', dest='sigma_d', type=float, default=1.0, help='sigma of gaussian noise of discriminators')
+    parser.add_argument('--sigma_d', dest='sigma_d', type=float, default=0.0, help='sigma of gaussian noise of discriminators')
     parser.add_argument('--model', dest='model', default='base', help='three different models, base, partial, full')
     parser.add_argument('--type', dest='type', default='cyclegan', help='cyclegan or classifier')
-
     return parser.parse_args()
 
-args = process_args()
-
+def process_args():
+    class EasyDict:
+        pass
+    args = EasyDict()
+    args.dataset_dir = 'JAZZ2ROCK'  # path of the dataset
+    args.dataset_A_dir = 'JC_J'  # path of the dataset of domain A
+    args.dataset_B_dir = 'JC_C'  # path of the dataset of domain B
+    args.epoch = 100  # # of epoch
+    args.epoch_step = 10  # # of epoch to decay lr
+    args.batch_size = 16  # # images in batch
+    args.train_size = 1e8  # # images used to train
+    args.load_size = 286  # scale images to this size
+    args.fine_size = 128  # then crop to this size
+    args.time_step = 64  # time step of pianoroll
+    args.pitch_range = 84  # pitch range of pianoroll
+    args.ngf = 64  # # of gen filters in first conv layer
+    args.ndf = 64  # # of discri filters in first conv layer
+    args.input_nc = 1  # # of input image channels
+    args.output_nc = 1  # # of output image channels
+    args.lr = 0.0002  # initial learning rate for adam
+    args.beta1 = 0.5  # momentum term of adam
+    args.which_direction = 'AtoB'  # AtoB or BtoA
+    args.phase = 'train'  # train, test
+    args.save_freq = 1000  # save a model every save_freq iterations
+    args.print_freq = 100  # print the debug information every print_freq iterations
+    args.continue_train = False  # if continue training, load the latest model: 1: true, 0: false
+    args.checkpoint_dir = './checkpoint'  # models are saved here
+    args.sample_dir = './samples'  # sample are saved here
+    args.test_dir = './test'  # test sample are saved here
+    args.log_dir = './log'  # logs are saved here
+    args.L1_lambda = 10.0  # weight on L1 term in objective
+    args.gamma = 1.0  # weight of extra discriminators
+    args.use_midi_G = False  # select generator for midinet
+    args.use_midi_D = False  # select disciminator for midinet
+    args.use_lsgan = False  # gan loss defined in lsgan
+    args.max_size = 50  # max size of image pool, 0 means do not use image pool
+    args.sigma_c = 1.0  # sigma of gaussian noise of classifiers
+    args.sigma_d = 1.0  # sigma of gaussian noise of discriminators
+    args.model = 'base'  # three different models, base, partial, full
+    args.type = 'cyclegan'  # cyclegan or classifier    
+    return args
 
 def main(_):
+    args = process_args()
+    
     if not os.path.exists(args.checkpoint_dir):
         os.makedirs(args.checkpoint_dir)
     if not os.path.exists(args.sample_dir):

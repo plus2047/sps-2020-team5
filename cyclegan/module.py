@@ -1,7 +1,7 @@
 from __future__ import division
 import tensorflow as tf
-from ops import *
-from utils import *
+from .ops import *
+from .utils import *
 
 
 def abs_criterion(in_, target):

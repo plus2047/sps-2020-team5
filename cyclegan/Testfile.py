@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pretty_midi
 from pypianoroll import Multitrack, Track
 import librosa.display
-from utils import *
+from .utils import *
 
 ROOT_PATH = '/Users/sumuzhao/Downloads/'
 test_ratio = 0.1

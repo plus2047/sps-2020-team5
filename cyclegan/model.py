@@ -8,9 +8,9 @@ import tensorflow as tf
 import numpy as np
 import config
 from collections import namedtuple
-from module import *
-from utils import *
-from ops import *
+from .module import *
+from .utils import *
+from .ops import *
 from metrics import *
 # os.environ["CUDA_VISIBLE_DEVICES"] = os.environ['SGE_GPU']
 
@@ -225,10 +225,6 @@ class cyclegan(object):
             else:
                 print(" [!] Load failed...")
 
-        load_data_fn = load_midi_data \
-            if len(data_mixed) > 0 and data_mixed[0][-3:].upper == "MID"\
-            else load_npy_data
-
         for epoch in range(args.epoch):
 
             # Shuffle training data
@@ -247,7 +243,7 @@ class cyclegan(object):
                 # To feed real_data
                 batch_files = list(zip(dataA[idx * self.batch_size:(idx + 1) * self.batch_size],
                                        dataB[idx * self.batch_size:(idx + 1) * self.batch_size]))
-                batch_images = [load_data_fn(batch_file) for batch_file in batch_files]
+                batch_images = [load_npy_data(batch_file) for batch_file in batch_files]
                 batch_images = np.array(batch_images).astype(np.float32)
 
                 # To feed gaussian noise
@@ -339,14 +335,15 @@ class cyclegan(object):
 
         self.saver.save(self.sess, os.path.join(checkpoint_dir, model_name), global_step=step)
 
-    def load(self, checkpoint_dir):
+    def load(self, checkpoint_dir, subdir=True):
         print(" [*] Reading checkpoint...")
 
-        model_dir = "{}2{}_{}_{}_{}".format(self.dataset_A_dir, self.dataset_B_dir, self.now_datetime, self.model,
-                                            self.sigma_d)
-        # model_dir = "{}2{}_{}_{}_{}".format(self.dataset_A_dir, self.dataset_B_dir, '2018-06-14', self.model,
-        #                                     self.sigma_d)
-        checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
+        if subdir:
+            model_dir = "{}2{}_{}_{}_{}".format(self.dataset_A_dir, self.dataset_B_dir, self.now_datetime, self.model,
+                                                self.sigma_d)
+            # model_dir = "{}2{}_{}_{}_{}".format(self.dataset_A_dir, self.dataset_B_dir, '2018-06-14', self.model,
+            #                                     self.sigma_d)
+            checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
 
         ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
         if ckpt and ckpt.model_checkpoint_path:
@@ -479,9 +476,10 @@ class cyclegan(object):
     def load_model(self, args):
         init_op = tf.global_variables_initializer()
         self.sess.run(init_op)
-        if self.load(args.checkpoint_dir):
+        if self.load(args.checkpoint_dir, subdir=False):
             print(" [*] Load SUCCESS")
         else:
+            print(args.checkpoint_dir)
             print(" [!] Load failed...")
 
     def serve(self, args, input_dir, output_dir):

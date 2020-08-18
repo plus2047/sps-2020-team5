@@ -12,7 +12,10 @@ Install flask:
 
 Then, `cd` into the root folder of this project (which contains `main.py`), and run command:
 
-    FLASK_APP=main.py FLASK_ENV=development flask run
+    FLASK_APP=main.py FLASK_ENV=development FLASK_DEBUG=0 flask run
+
+Note: we have to turn off flask debug model with `FLASK_DEBUG=0`, else tensorflow will raise an error,
+which should be a bug of tensorflow or flask.
 
 Then a development server will start. It should host on http://localhost:5000.
 

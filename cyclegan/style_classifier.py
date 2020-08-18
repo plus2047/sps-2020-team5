@@ -2,9 +2,9 @@ import numpy as np
 import tensorflow as tf
 from random import shuffle
 from collections import namedtuple
-from module import *
-from ops import *
-from utils import *
+from .module import *
+from .ops import *
+from .utils import *
 from glob import glob
 # os.environ["CUDA_VISIBLE_DEVICES"] = os.environ['SGE_GPU']
 

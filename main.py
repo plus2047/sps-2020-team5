@@ -2,6 +2,8 @@ import flask
 import json
 import visualization
 import os
+import sys
+from cyclegan.serve import CycleganService
 
 app = flask.Flask(__name__)
 app.secret_key = "1238QWERTYUICVBNMFGHJ"  # random string
@@ -12,6 +14,8 @@ app.config["MAX_CONTENT_LENGTH"] = 128 * 1024 * 1024  # 128M
 # tmp file can only be stored in /tmp/ when deployed on google cloud. (otherwise, Datastore is recommended)
 tmp_folder = "/tmp/"
 
+# model service
+cyclegan_service = CycleganService()
 
 @app.route('/', methods=["GET"])
 def index():
