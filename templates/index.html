@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='music.css') }}">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
         <script src="{{ url_for('static', filename='script.js') }}"></script>
     </head>
 
@@ -17,58 +18,61 @@
                 <h3>Try out our model! Have fun!</h3>
                 <p>Step 1: Choose the model you want to use.</p>
                 <button id="chooseCyclegan" onclick="showCyclegan()">Symbolic Music Genre Transfer with CycleGAN</button>
-                <button id="chooseTranslation" onclick="showTranslation()">SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</button>
+                <button id="chooseRnn" onclick="showRnn()">SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</button>
 
+                <!-- Cyclegan -->
                 <div id="cyclegan" style="display:none">
                     <h2>Symbolic Music Genre Transfer with CycleGAN</h2>
                     <p>Step 2: You can upload a piece of music in MIDI format, or select one in our datasets.</p>
-                    <button id="chooseUpload" onclick="showUpload()">upload</button>
-                    <button id="chooseSelect" onclick="showSelect()">select</button>
+                    <button id="chooseUploadCyclegan" onclick="showUploadCyclegan()">upload</button>
+                    <button id="chooseSelectCyclegan" onclick="showSelectCyclegan()">select</button>
 
-                    <div id="upload" style="display:none">
-                        <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
-                            <select name="srcGenre" id="srcGenre">
+                    <!-- cyclegan上传文件 -->
+                    <div id="uploadCyclegan" style="display:none">
+                        <form action="transform" method="POST" id="music-upload-cyclegan" class enctype="multipart/form-data">
+                            <select name="srcGenre" id="srcGenre-upload-cyclegan">
                                 <option>- Source Genre -</option>
                                 <option>pop</option>
                                 <option>jazz</option>
                                 <option>classic</option>
                             </select>
 
-                            <select name="tarGenre" id="tarGenre">
+                            <select name="tarGenre" id="tarGenre-upload-cyclegan">
                                 <option>- Target Genre -</option>
                                 <option>pop</option>
                                 <option>jazz</option>
                                 <option>classic</option>
                             </select>
 
-                            <input type='text' name='textfield' id='filename' class='txt' />
-                            <label class="btn" for="music">Choose File</label>
-                            <input type="file" id="music" name="music" class="file" onchange="document.getElementById('filename').value = this.value"/>
+                            <input type='text' name='textfield' id='filename-upload-cyclegan' class='txt' />
+                            <label class="btn" for="file-upload-cyclegan">Choose File</label>
+                            <input type="file" id="file-upload-cyclegan" name="music" class="file" onchange="document.getElementById('filename-upload-cyclegan').value = this.value"/>
                             <br>
-                            <button type="submit" onclick="musicUpload(event)">Submit</button>
+                            <button type="submit" onclick="musicUpload(event, 'music-upload-cyclegan')">Submit</button>
                         </form>
                         <br>
                         <button onclick="showResult()">Show</button>
                     </div>
 
-                    <div id="select" style="display:none">
-                        <form action="transform" method="POST" id="music-upload" class enctype="multipart/form-data">
-                            <select name="srcGenre" id="srcGenre" onchange="setSrcMusic()">
+                    <!-- cyclegan选择文件 -->
+                    <div id="selectCyclegan" style="display:none">
+                        <form action="transform" method="POST" id="music-select-cyclegan" class enctype="multipart/form-data">
+                            <select name="srcGenre" id="srcGenre-select-cyclegan" onchange="setSrcMusic('srcGenre-select-cyclegan', 'musicName-select-cyclegan')">
                                 <option>- Source Genre -</option>
                                 <option>pop</option>
                                 <option>jazz</option>
                                 <option>classic</option>
                             </select>
-                            <select name="" id="musicName" onchange="loadMidiUrl()"></select>
-                            
-                            <select name="tarGenre" id="tarGenre">
+                            <select name="" id="musicName-select-cyclegan" onchange="loadMidiUrl('srcGenre-select-cyclegan', 'musicName-select-cyclegan')"></select>
+
+                            <select name="tarGenre" id="tarGenre-select-cyclegan">
                                 <option>- Target Genre -</option>
                                 <option>pop</option>
                                 <option>jazz</option>
                                 <option>classic</option>
                             </select>
-                            
-                            <button type="submit" onclick="musicUpload(event)">Submit</button>
+
+                            <button type="submit" onclick="musicUpload(event, 'music-select-cyclegan')">Submit</button>
                         </form>
                         <p>You can play the chosen music here!</p>
                         <button onclick="playMidi()">Play</button>
@@ -76,29 +80,88 @@
                         <br>
                         <button onclick="showResult()">Show</button>
                     </div>
+                </div>
 
-                    <div id="showResult" style="display:none">
-                        <ul>
-                            <li class="total">
-                                <img id="visualization" src="{{ url_for('static', filename='images/Taylor.jpg') }}"/>
-                                <div class="icon">
-                                    <div class="pause" id="off" onclick="playPause()">
-                                        <img src="{{ url_for('static', filename='images/play.png') }}" id="music-play-icon">
-                                        <audio id="audio" src="{{ url_for('static', filename='music/Red.mp3') }}"></audio>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                        <div id="download">
-                            <button onclick="download()">Download</button>
-                        </div>
+                <!-- RNN -->
+                <div id="rnn" style="display:none">
+                    <h2>SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</h2>
+                    <p>Step 2: You can upload a piece of music in MIDI format, or select one in our datasets.</p>
+                    <button id="chooseUploadRnn" onclick="showUploadRnn()">upload</button>
+                    <button id="chooseSelectRnn" onclick="showSelectRnn()">select</button>
+
+                    <!-- rnn上传文件 -->
+                    <div id="uploadRnn" style="display:none">
+                        <form action="transform" method="POST" id="music-upload-rnn" class enctype="multipart/form-data">
+                            <select name="srcGenre" id="srcGenre-upload-rnn">
+                                <option>- Source Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+
+                            <select name="tarGenre" id="tarGenre-upload-rnn">
+                                <option>- Target Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+
+                            <input type='text' name='textfield' id='filename-upload-rnn' class='txt' />
+                            <label class="btn" for="file-upload-rnn">Choose File</label>
+                            <input type="file" id="file-upload-rnn" name="music" class="file" onchange="document.getElementById('filename-upload-rnn').value = this.value"/>
+                            <br>
+                            <button type="submit" onclick="musicUpload(event, 'music-upload-rnn')">Submit</button>
+                        </form>
+                        <br>
+                        <button onclick="showResult()">Show</button>
+                    </div>
+
+                    <!-- rnn选择文件 -->
+                    <div id="selectRnn" style="display:none">
+                        <form action="transform" method="POST" id="music-select-rnn" class enctype="multipart/form-data">
+                            <select name="srcGenre" id="srcGenre-select-rnn" onchange="setSrcMusic('srcGenre-select-rnn', 'musicName-select-rnn')">
+                                <option>- Source Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+                            <select name="" id="musicName-select-rnn" onchange="loadMidiUrl('srcGenre-select-rnn', 'musicName-select-rnn')"></select>
+
+                            <select name="tarGenre" id="tarGenre-select-rnn">
+                                <option>- Target Genre -</option>
+                                <option>pop</option>
+                                <option>jazz</option>
+                                <option>classic</option>
+                            </select>
+
+                            <button type="submit" onclick="musicUpload(event, 'music-select-rnn')">Submit</button>
+                        </form>
+                        <p>You can play the chosen music here!</p>
+                        <button onclick="playMidi()">Play</button>
+                        <button onclick="stopMidi()">Pause</button>
+                        <br>
+                        <button onclick="showResult()">Show</button>
                     </div>
                 </div>
 
-                <div id="translation" style="display:none">
-                    <h2>SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</h2>
+                <!-- Show result -->
+                <div id="showResult" style="display:none">
+                    <ul>
+                        <li class="total">
+                            <img id="visualization" src="{{ url_for('static', filename='images/Taylor.jpg') }}"/>
+                            <div class="icon">
+                                <div class="pause" id="off" onclick="playPause()">
+                                    <img src="{{ url_for('static', filename='images/play.png') }}" id="music-play-icon">
+                                    <audio id="audio" src="{{ url_for('static', filename='music/Red.mp3') }}"></audio>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div id="download">
+                        <button onclick="download()">Download</button>
+                    </div>
                 </div>
-                
+
             </div>
         </div>
     </body>
