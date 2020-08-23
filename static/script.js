@@ -1,14 +1,7 @@
 document.write("<script language=javascript src='static/midi.js'></script>");
 
 var genreList=['- Source Genre -', 'pop','jazz','classic'];
-var genreMusicList=[[],['Aaliyah_-_Try_Again'], ['2_of_a_kind_jp'], ['Menuet']];
-
-function getSrcMusic(){
-    for (var i = 0; i < 3; ++i) {
-        var path = "static/music/" + genreList[i] + "/";
-        // todo：获取文件夹下所有的文件名，js在Chrome无法完成，应该要后端获取
-    }
-}
+var genreMusicList=[[],[], [], []];
 
 // 加载所有类型下的音乐文件
 function setSrcMusic(srcGenre, musicName){
@@ -25,7 +18,7 @@ function setSrcMusic(srcGenre, musicName){
 
 function musicUpload(event, divName) {
     // formData: 
-    //      model(cyclegan/rnn),
+    //      model(cyclegan/seq2seq),
     //      type(select/upload),
     //      srcGenre(pop/jazz/classic),
     //      tarGenre(pop/jazz/classic)
@@ -64,7 +57,7 @@ function musicUpload(event, divName) {
         formData.append("filePath", "static/music/" + srcGenre + "/" + tarGenre  + ".mid");
     }
     else if (divName == "music-upload-rnn"){
-        formData.append("model", "rnn");
+        formData.append("model", "seq2seq");
         formData.append("type", "upload");
 
         var srcSelect = document.getElementById("srcGenre-upload-rnn");
@@ -80,7 +73,7 @@ function musicUpload(event, divName) {
         formData.append("file", fileObj);
     }
     else if (divName == "music-select-rnn"){
-        formData.append("model", "rnn");
+        formData.append("model", "seq2seq");
         formData.append("type", "select");
 
         var srcSelect = document.getElementById("srcGenre-select-rnn");
@@ -109,23 +102,37 @@ function musicUpload(event, divName) {
             var response = JSON.parse(data)
             $("#visualization")[0].src = response.image + "?" + new Date().getTime();
             $("#audio")[0].src = response.music
+            path = response.music;
+            output.loadMIDIUrl(path);
             show()
         }
      });
      
 }
 
+function getMusicList() {
+     $.getJSON("/static_music_list",function(data){
+        for (var i = 0; i < data.length; ++i){
+            var fileName = data[i].split("/");
+            var len = fileName[3].length;
+            if (fileName[2] == "pop") genreMusicList[1].push(fileName[3].substring(0, len - 4));
+            else if (fileName[2] == "jazz") genreMusicList[2].push(fileName[3].substring(0, len - 4));
+            else if (fileName[2] == "classic") genreMusicList[3].push(fileName[3].substring(0, len - 4));
+            //console.log(genreMusicList);
+        }
+    });
+}
+
 function playPause(){
-    var audio = document.getElementById("audio"); 
     var musiPlayIcon = document.getElementById("music-play-icon");
     var off = document.getElementById("off");
     if(off.className == "play"){
-        audio.pause(); 
+        output.stopMIDI();
         off.className="pause"; 
         musiPlayIcon.src = "static/images/play.png";  
     }
     else if(off.className == "pause"){ 
-        audio.play();
+        output.playMIDI();
         off.className="play";  
         musiPlayIcon.src = "static/images/pause.png"; 
     }
@@ -138,7 +145,7 @@ function loadMidiUrl(srcGenre, musicName){
     path = "static/music/" + genreList[genre.selectedIndex] + 
         '/' + musicList[music.selectedIndex-1] + '.mid';
     console.log(path);
-    synth.loadMIDIUrl(path);
+    input.loadMIDIUrl(path);
 }
 
 function showResult() {
@@ -182,22 +189,25 @@ function showSelectRnn() {
 }
 
 // 播放Midi
-function playMidi(){
-    synth.playMIDI();
+function playMidiInput(){
+    input.playMIDI();
 }
 
-function stopMidi(){
-    synth.stopMIDI();
+function stopMidiInput(){
+    input.stopMIDI();
 }
 
-function SetProgram(p){
-    synth.send([0xc0,p]);
+function SetProgramInput(p){
+    input.send([0xc0,p]);
 }
 
 function Init(){
-    synth=new WebAudioTinySynth({voices:64});
+    getMusicList();
+    input=new WebAudioTinySynth({voices:64});
+    output=new WebAudioTinySynth({voices:64});
     setInterval(function(){
-        var st=synth.getPlayStatus();
+        input.getPlayStatus();
+        output.getPlayStatus();
         //document.getElementById("status").innerHTML="Play:"+st.play+"  Pos:"+st.curTick+"/"+st.maxTick;
     },100);
 }
