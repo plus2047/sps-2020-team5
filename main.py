@@ -3,7 +3,9 @@ import json
 import visualization
 import os
 import sys
+import pathlib
 from cyclegan.serve import CycleganService
+import shutil
 
 app = flask.Flask(__name__)
 app.secret_key = "1238QWERTYUICVBNMFGHJ"  # random string
@@ -12,10 +14,18 @@ app.config["MAX_CONTENT_LENGTH"] = 128 * 1024 * 1024  # 128M
 #music_upload_path = "upload/"
 
 # tmp file can only be stored in /tmp/ when deployed on google cloud. (otherwise, Datastore is recommended)
-tmp_folder = "/tmp/"
+tmp_folder = "/tmp/" if sys.platform.startswith("linux") else "tmp/"
+input_folder = tmp_folder + "music_input/"
+output_folder = tmp_folder + "music_outupt/"
+
+if not os.path.exists(input_folder):
+    os.mkdir(input_folder)
+if not os.path.exists(output_folder):
+    os.mkdir(output_folder)
 
 # model service
 cyclegan_service = CycleganService()
+seq2seq_service = cyclegan_service  # change it info seq2seq model
 
 @app.route('/', methods=["GET"])
 def index():
@@ -25,22 +35,69 @@ def index():
 @app.route('/tmp/<path:path>', methods=["GET"])
 def tmp(path):
     path = path.split("?")[0]
-    return flask.send_from_directory("/tmp/", path)
+    return flask.send_from_directory(tmp_folder, path)
 
 
 @app.route("/transform", methods=["POST"])
 def transform():
-    file = flask.request.files["music"]
-    filename = tmp_folder + file.filename
-    #if not os.path.isdir(tmp_folder):
-    #    os.mkdir(tmp_folder)
-    file.save(filename)
-    visualization.visualization(filename, "/tmp/wav.png")
+
+    form = flask.request.form
+
+    service = seq2seq_service if form["model"] == "seq2seq" else cyclegan_service
+
+    model_name = None
+    direction = None
+    if form["srcGenre"] == "jazz" and form["tarGenre"] == "pop":
+        model_name = "jazz_pop"
+        direction = "AtoB"
+    elif form["srcGenre"] == "pop" and form["tarGenre"] == "jazz":
+        model_name = "jazz_pop"
+        direction = "BtoA"
+    elif form["srcGenre"] == "jazz" and form["tarGenre"] == "classic":
+        model_name = "jazz_classic"
+        direction = "AtoB"
+    elif form["srcGenre"] == "classic" and form["tarGenre"] == "jazz":
+        model_name = "jazz_classic"
+        direction = "BtoA"
+    elif form["srcGenre"] == "pop" and form["tarGenre"] == "classic":
+        model_name = "pop_classic"
+        direction = "AtoB"
+    elif form["srcGenre"] == "classic" and form["tarGenre"] == "pop":
+        model_name = "pop_classic"
+        direction = "BtoA"
+    else:
+        print("Unspported translate action!")
+        return ""
+    
+    basename = ""
+    if form["type"] == "select":
+        f = form["filePath"]
+        shutil.copy2(f, input_folder)
+        basename = pathlib.Path(f).basename
+        visualization.visualization(f, tmp_folder + "wav.png")
+    else:
+        file = flask.request.files["file"]
+        basename = file.filename
+        fullname = input_folder + file.filename
+        file.save(fullname)
+        visualization.visualization(fullname, tmp_folder + "wav.png")
+    
+    service.run_file(input_folder, output_folder, model_name, direction)
+
+    b = pathlib.Path(basename)
+    output_name = output_folder + b.stem + "_transfer.mid"
 
     return json.dumps({
-        "image": "/tmp/wav.png",
-        "music": "static/music/Red.mp3",
+        "image": tmp_folder + "wav.png",
+        "music": output_name,
     })
+
+
+@app.route('/static_music_list', methods=["GET"])
+def static_music_list():
+    def findall(suf):
+        return [str(s) for s in pathlib.Path("static/music/").glob("**/*." + suf)]
+    return json.dumps(findall("mid") + findall("npy"))
 
 
 if __name__ == '__main__':
@@ -51,4 +108,5 @@ if __name__ == '__main__':
     # the "static" directory. See:
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
+
     app.run(port=8080, debug=True)
