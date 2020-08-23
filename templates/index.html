@@ -75,21 +75,21 @@
                             <button type="submit" onclick="musicUpload(event, 'music-select-cyclegan')">Submit</button>
                         </form>
                         <p>You can play the chosen music here!</p>
-                        <button onclick="playMidi()">Play</button>
-                        <button onclick="stopMidi()">Pause</button>
+                        <button onclick="playMidiInput()">Play</button>
+                        <button onclick="stopMidiInput()">Pause</button>
                         <br>
                         <button onclick="showResult()">Show</button>
                     </div>
                 </div>
 
-                <!-- RNN -->
+                <!-- seq2seq -->
                 <div id="rnn" style="display:none">
                     <h2>SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</h2>
                     <p>Step 2: You can upload a piece of music in MIDI format, or select one in our datasets.</p>
                     <button id="chooseUploadRnn" onclick="showUploadRnn()">upload</button>
                     <button id="chooseSelectRnn" onclick="showSelectRnn()">select</button>
 
-                    <!-- rnn上传文件 -->
+                    <!-- seq2seq上传文件 -->
                     <div id="uploadRnn" style="display:none">
                         <form action="transform" method="POST" id="music-upload-rnn" class enctype="multipart/form-data">
                             <select name="srcGenre" id="srcGenre-upload-rnn">
@@ -116,7 +116,7 @@
                         <button onclick="showResult()">Show</button>
                     </div>
 
-                    <!-- rnn选择文件 -->
+                    <!-- seq2seq选择文件 -->
                     <div id="selectRnn" style="display:none">
                         <form action="transform" method="POST" id="music-select-rnn" class enctype="multipart/form-data">
                             <select name="srcGenre" id="srcGenre-select-rnn" onchange="setSrcMusic('srcGenre-select-rnn', 'musicName-select-rnn')">
@@ -137,8 +137,8 @@
                             <button type="submit" onclick="musicUpload(event, 'music-select-rnn')">Submit</button>
                         </form>
                         <p>You can play the chosen music here!</p>
-                        <button onclick="playMidi()">Play</button>
-                        <button onclick="stopMidi()">Pause</button>
+                        <button onclick="playMidiInput()">Play</button>
+                        <button onclick="stopMidiInput()">Pause</button>
                         <br>
                         <button onclick="showResult()">Show</button>
                     </div>
@@ -152,7 +152,6 @@
                             <div class="icon">
                                 <div class="pause" id="off" onclick="playPause()">
                                     <img src="{{ url_for('static', filename='images/play.png') }}" id="music-play-icon">
-                                    <audio id="audio" src="{{ url_for('static', filename='music/Red.mp3') }}"></audio>
                                 </div>
                             </div>
                         </li>
