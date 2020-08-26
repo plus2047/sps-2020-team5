@@ -27,6 +27,7 @@ if not os.path.exists(output_folder):
 cyclegan_service = CycleganService()
 seq2seq_service = cyclegan_service  # change it info seq2seq model
 
+
 @app.route('/', methods=["GET"])
 def index():
     return flask.render_template("index.html")
@@ -89,14 +90,21 @@ def transform():
 
     return json.dumps({
         "image": tmp_folder + "wav.png",
-        "music": output_name,
+        "music": output_name
     })
 
 
-@app.route('/static_music_list', methods=["GET"])
-def static_music_list():
+@app.route('/static_music_list_cyclegan', methods=["GET"])
+def static_music_list_cyclegan():
     def findall(suf):
-        return [str(s) for s in pathlib.Path("static/music/").glob("**/*." + suf)]
+        return [str(s) for s in pathlib.Path("static/music/cyclegan").glob("**/*." + suf)]
+    return json.dumps(findall("mid") + findall("npy"))
+
+
+@app.route('/static_music_list_seq2seq', methods=["GET"])
+def static_music_list_seq2seq():
+    def findall(suf):
+        return [str(s) for s in pathlib.Path("static/music/seq2seq").glob("**/*." + suf)]
     return json.dumps(findall("mid") + findall("npy"))
 
 

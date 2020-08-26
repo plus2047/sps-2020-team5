@@ -18,7 +18,7 @@
                 <h3>Try out our model! Have fun!</h3>
                 <p>Step 1: Choose the model you want to use.</p>
                 <button id="chooseCyclegan" onclick="showCyclegan()">Symbolic Music Genre Transfer with CycleGAN</button>
-                <button id="chooseRnn" onclick="showRnn()">SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</button>
+                <button id="chooseSeq2seq" onclick="showSeq2seq()">SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</button>
 
                 <!-- Cyclegan -->
                 <div id="cyclegan" style="display:none">
@@ -57,13 +57,13 @@
                     <!-- cyclegan选择文件 -->
                     <div id="selectCyclegan" style="display:none">
                         <form action="transform" method="POST" id="music-select-cyclegan" class enctype="multipart/form-data">
-                            <select name="srcGenre" id="srcGenre-select-cyclegan" onchange="setSrcMusic('srcGenre-select-cyclegan', 'musicName-select-cyclegan')">
+                            <select name="srcGenre" id="srcGenre-select-cyclegan" onchange="setSrcMusicCyclegan('srcGenre-select-cyclegan', 'musicName-select-cyclegan')">
                                 <option>- Source Genre -</option>
                                 <option>pop</option>
                                 <option>jazz</option>
                                 <option>classic</option>
                             </select>
-                            <select name="" id="musicName-select-cyclegan" onchange="loadMidiUrl('srcGenre-select-cyclegan', 'musicName-select-cyclegan')"></select>
+                            <select name="" id="musicName-select-cyclegan" onchange="loadMidiUrl('cyclegan', 'srcGenre-select-cyclegan', 'musicName-select-cyclegan')"></select>
 
                             <select name="tarGenre" id="tarGenre-select-cyclegan">
                                 <option>- Target Genre -</option>
@@ -83,58 +83,45 @@
                 </div>
 
                 <!-- seq2seq -->
-                <div id="rnn" style="display:none">
+                <div id="seq2seq" style="display:none">
                     <h2>SUPERVISED SYMBOLIC MUSIC STYLE TRANSLATION</h2>
                     <p>Step 2: You can upload a piece of music in MIDI format, or select one in our datasets.</p>
-                    <button id="chooseUploadRnn" onclick="showUploadRnn()">upload</button>
-                    <button id="chooseSelectRnn" onclick="showSelectRnn()">select</button>
+                    <button id="chooseUploadSeq2seq" onclick="showUploadSeq2seq()">upload</button>
+                    <button id="chooseSelectSeq2seq" onclick="showSelectSeq2seq()">select</button>
 
                     <!-- seq2seq上传文件 -->
-                    <div id="uploadRnn" style="display:none">
-                        <form action="transform" method="POST" id="music-upload-rnn" class enctype="multipart/form-data">
-                            <select name="srcGenre" id="srcGenre-upload-rnn">
-                                <option>- Source Genre -</option>
-                                <option>pop</option>
-                                <option>jazz</option>
-                                <option>classic</option>
-                            </select>
-
-                            <select name="tarGenre" id="tarGenre-upload-rnn">
+                    <div id="uploadSeq2seq" style="display:none">
+                        <form action="transform" method="POST" id="music-upload-seq2seq" class enctype="multipart/form-data">
+                            <select name="tarGenre" id="tarGenre-upload-seq2seq">
                                 <option>- Target Genre -</option>
-                                <option>pop</option>
                                 <option>jazz</option>
-                                <option>classic</option>
+                                <option>chacha</option>
+                                <option>reggae</option>
                             </select>
 
-                            <input type='text' name='textfield' id='filename-upload-rnn' class='txt' />
-                            <label class="btn" for="file-upload-rnn">Choose File</label>
-                            <input type="file" id="file-upload-rnn" name="music" class="file" onchange="document.getElementById('filename-upload-rnn').value = this.value"/>
+                            <input type='text' name='textfield' id='filename-upload-seq2seq' class='txt' />
+                            <label class="btn" for="file-upload-seq2seq">Choose File</label>
+                            <input type="file" id="file-upload-seq2seq" name="music" class="file" onchange="document.getElementById('filename-upload-seq2seq').value = this.value"/>
                             <br>
-                            <button type="submit" onclick="musicUpload(event, 'music-upload-rnn')">Submit</button>
+                            <button type="submit" onclick="musicUpload(event, 'music-upload-seq2seq')">Submit</button>
                         </form>
                         <br>
                         <button onclick="showResult()">Show</button>
                     </div>
 
                     <!-- seq2seq选择文件 -->
-                    <div id="selectRnn" style="display:none">
-                        <form action="transform" method="POST" id="music-select-rnn" class enctype="multipart/form-data">
-                            <select name="srcGenre" id="srcGenre-select-rnn" onchange="setSrcMusic('srcGenre-select-rnn', 'musicName-select-rnn')">
-                                <option>- Source Genre -</option>
-                                <option>pop</option>
-                                <option>jazz</option>
-                                <option>classic</option>
-                            </select>
-                            <select name="" id="musicName-select-rnn" onchange="loadMidiUrl('srcGenre-select-rnn', 'musicName-select-rnn')"></select>
+                    <div id="selectSeq2seq" style="display:none">
+                        <form action="transform" method="POST" id="music-select-seq2seq" class enctype="multipart/form-data">
+                            <select name="" id="musicName-select-seq2seq" onchange="loadMidiUrl('seq2seq', '', 'musicName-select-seq2seq')"></select>
 
-                            <select name="tarGenre" id="tarGenre-select-rnn">
+                            <select name="tarGenre" id="tarGenre-select-seq2seq">
                                 <option>- Target Genre -</option>
                                 <option>pop</option>
                                 <option>jazz</option>
                                 <option>classic</option>
                             </select>
 
-                            <button type="submit" onclick="musicUpload(event, 'music-select-rnn')">Submit</button>
+                            <button type="submit" onclick="musicUpload(event, 'music-select-seq2seq')">Submit</button>
                         </form>
                         <p>You can play the chosen music here!</p>
                         <button onclick="playMidiInput()">Play</button>
@@ -148,7 +135,7 @@
                 <div id="showResult" style="display:none">
                     <ul>
                         <li class="total">
-                            <img id="visualization" src="{{ url_for('static', filename='images/Taylor.jpg') }}"/>
+                            <img id="visualization"/>
                             <div class="icon">
                                 <div class="pause" id="off" onclick="playPause()">
                                     <img src="{{ url_for('static', filename='images/play.png') }}" id="music-play-icon">
