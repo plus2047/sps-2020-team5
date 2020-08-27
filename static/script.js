@@ -36,7 +36,7 @@ function musicUpload(event, divName) {
             model(cyclegan/seq2seq),
             type(select/upload),
             srcGenre(pop/jazz/classic), 如果是seq2seq, 则没有这一项
-            tarGenre(pop/jazz/classic)
+            tarGenre(cyclegan: pop/jazz/classic; seq2seq: jazz/chacha/reggae) 
             如果type == "upload"，则是file，表示上传的文件; 如果type == "select"，则是filePath，表示选择的文件路径
         
         获取返回值：
