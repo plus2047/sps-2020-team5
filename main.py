@@ -6,6 +6,7 @@ import sys
 import pathlib
 from cyclegan.serve import CycleganService
 import shutil
+import cyclegan.convert_clean
 
 app = flask.Flask(__name__)
 app.secret_key = "1238QWERTYUICVBNMFGHJ"  # random string
@@ -27,6 +28,20 @@ if not os.path.exists(output_folder):
 cyclegan_service = CycleganService()
 seq2seq_service = cyclegan_service  # change it info seq2seq model
 
+def convert_to_npy(input_file):
+    convert_work_dir = tmp_folder + "midi2npy/"
+    if not os.path.exists(convert_work_dir):
+        os.mkdir(convert_work_dir)
+    origin_dir = convert_work_dir + "origin_midi/"
+    if not os.path.exists(origin_dir):
+        os.mkdir(origin_dir)
+    
+    shutil.copy2(input_file, convert_work_dir + "origin_midi/origin.mid")
+    cyclegan.convert_clean.main(convert_work_dir)
+    basename = pathlib.Path(input_file).name
+
+    shutil.copy2(convert_work_dir + "phrase/piano_8.npy",
+        tmp_folder + "music_input/" + basename[:-3] + "npy")
 
 @app.route('/', methods=["GET"])
 def index():
@@ -85,7 +100,7 @@ def transform():
 
     if basename.endswith("mid") and form["model"] == "cyclegan":
         # convert into npy
-        pass
+        convert_to_npy(input_folder + basename)
 
     service.run_file(input_folder, output_folder, model_name, direction)
 
