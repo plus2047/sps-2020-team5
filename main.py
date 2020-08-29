@@ -90,17 +90,18 @@ def transform():
         f = form["filePath"]
         shutil.copy2(f, input_folder)
         basename = pathlib.Path(f).name
-        visualization.visualization(f, tmp_folder + "wav.png")
     else:
         file = flask.request.files["file"]
         basename = file.filename
         fullname = input_folder + file.filename
         file.save(fullname)
-        visualization.visualization(fullname, tmp_folder + "wav.png")
 
     if basename.endswith("mid") and form["model"] == "cyclegan":
         # convert into npy
         convert_to_npy(input_folder + basename)
+
+    basename = basename[:-3] + "npy"
+    visualization.visualization(input_folder + basename, tmp_folder + "wav.png")
 
     service.run_file(input_folder, output_folder, model_name, direction)
 

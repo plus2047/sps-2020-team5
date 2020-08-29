@@ -140,7 +140,6 @@ function musicUpload(event, divName) {
                 outputPiano.loadMIDIUrl(path2);
                 outputBass.loadMIDIUrl(path3);
             }
-            show()
         }
     });
 

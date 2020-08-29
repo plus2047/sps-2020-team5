@@ -97,7 +97,7 @@ def get_npy(ROOT_PATH='./datasets/midi2npy/', test_ratio=0.1):
         os.makedirs(os.path.join(ROOT_PATH, 'phrase'))
     l = [f for f in os.listdir(os.path.join(ROOT_PATH, 'cleaner_npy'))]
     x = np.load(os.path.join(ROOT_PATH, 'cleaner_npy/' + l[0]))
-    print(x.shape)
+    # print(x.shape)
     count = 0
     for i in range(x.shape[0]):
         if np.max(x[i]):
@@ -106,7 +106,7 @@ def get_npy(ROOT_PATH='./datasets/midi2npy/', test_ratio=0.1):
             print(x[i].shape)
         if count == 11216:
             break
-    print(count)
+    # print(count)
 
     """some other codes"""
     # filepaths = []
