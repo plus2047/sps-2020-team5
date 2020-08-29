@@ -74,7 +74,7 @@ def transform():
     if form["type"] == "select":
         f = form["filePath"]
         shutil.copy2(f, input_folder)
-        basename = pathlib.Path(f).basename
+        basename = pathlib.Path(f).name
         visualization.visualization(f, tmp_folder + "wav.png")
     else:
         file = flask.request.files["file"]
@@ -82,7 +82,11 @@ def transform():
         fullname = input_folder + file.filename
         file.save(fullname)
         visualization.visualization(fullname, tmp_folder + "wav.png")
-    
+
+    if basename.endswith("mid") and form["model"] == "cyclegan":
+        # convert into npy
+        pass
+
     service.run_file(input_folder, output_folder, model_name, direction)
 
     b = pathlib.Path(basename)

@@ -5,10 +5,7 @@ import errno
 from pypianoroll import Multitrack, Track
 import pretty_midi
 import shutil
-
-ROOT_PATH = './datasets/midi2npy/'
-converter_path = os.path.join(ROOT_PATH, 'converter')
-cleaner_path = os.path.join(ROOT_PATH, 'cleaner')
+from cyclegan.Testfile import get_npy
 
 
 def make_sure_path_exists(path):
@@ -96,7 +93,7 @@ def get_merged(multitrack):
     return Multitrack(None, tracks, multitrack.tempo, multitrack.downbeat, multitrack.beat_resolution, multitrack.name)
 
 
-def converter(filepath):
+def converter(filepath, converter_path):
     """Save a multi-track piano-roll converted from a MIDI file to target
     dataset directory and update MIDI information to `midi_dict`"""
     try:
@@ -113,15 +110,18 @@ def converter(filepath):
 
         return [midi_name, midi_info]
 
-    except:
+    except Exception as e:
         return None
 
 
-def main():
+def main(ROOT_PATH='tmp/midi2npy/'):
     """Main function of the converter"""
+    converter_path = os.path.join(ROOT_PATH, 'converter')
+    cleaner_path = os.path.join(ROOT_PATH, 'cleaner')
     midi_paths = get_midi_path(os.path.join(ROOT_PATH, 'origin_midi'))
     midi_dict = {}
-    kv_pairs = [converter(midi_path) for midi_path in midi_paths]
+    
+    kv_pairs = [converter(midi_path, converter_path) for midi_path in midi_paths]
     for kv_pair in kv_pairs:
         if kv_pair is not None:
             midi_dict[kv_pair[0]] = kv_pair[1]
@@ -145,6 +145,8 @@ def main():
 
     with open(os.path.join(ROOT_PATH, 'midis_clean.json'), 'w') as outfile:
         json.dump(midi_dict_clean, outfile)
+
+    get_npy(ROOT_PATH)
 
     print("[Done] {} files out of {} have been successfully cleaned".format(count, len(midi_dict)))
 
