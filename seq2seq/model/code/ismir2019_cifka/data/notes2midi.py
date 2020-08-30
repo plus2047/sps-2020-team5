@@ -4,6 +4,7 @@ import argparse
 import collections
 import os
 import pickle
+import pathlib
 
 import pretty_midi
 
@@ -162,8 +163,11 @@ def notes2midi(input_file, output_dir):
             tempo = tempo / args.stretch
     if args.tempo:
         tempo = args.tempo
+    
     with open(input_file, 'rb') as input_file:
         data = pickle.load(input_file)
+    
+    #data = input_file
     fill_length = len(str(len(data) - 1))
 
     if args.range:
@@ -231,7 +235,10 @@ def notes2midi(input_file, output_dir):
             instrument.notes[:] = track
             midi.instruments.append(instrument)
 
-        midi.write(os.path.join(args.output_dir, fname))
+        
+        if not os.path.exists(args.output_dir):
+            os.mkdir(args.output_dir)
+        midi.write(os.path.join(args.output_dir, pathlib.Path(fname).name))
 
 
 
