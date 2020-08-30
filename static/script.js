@@ -110,7 +110,7 @@ function musicUpload(event, divName) {
         var music = musicListSeq2seq[musicSelect.selectedIndex - 1];
         
         formData.append("tarGenre", tarGenre);
-        formData.append("filePath", "static/music/" + music);
+        formData.append("filePath", "static/music/seq2seq/" + music);
     }
     /*
     for (var key of formData.keys()) {

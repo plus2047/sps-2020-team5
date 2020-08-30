@@ -5,6 +5,7 @@ import os
 import sys
 import pathlib
 from cyclegan.serve import CycleganService
+from seq2seq.model.server import Seq2SeqService
 import shutil
 import cyclegan.convert_clean
 
@@ -26,7 +27,7 @@ if not os.path.exists(output_folder):
 
 # model service
 cyclegan_service = CycleganService()
-seq2seq_service = cyclegan_service  # change it info seq2seq model
+seq2seq_service = Seq2SeqService()  # change it info seq2seq model
 
 def convert_to_npy(input_file):
     convert_work_dir = tmp_folder + "midi2npy/"
@@ -61,29 +62,32 @@ def transform():
 
     service = seq2seq_service if form["model"] == "seq2seq" else cyclegan_service
 
-    model_name = None
-    direction = None
-    if form["srcGenre"] == "jazz" and form["tarGenre"] == "pop":
-        model_name = "jazz_pop"
-        direction = "AtoB"
-    elif form["srcGenre"] == "pop" and form["tarGenre"] == "jazz":
-        model_name = "jazz_pop"
-        direction = "BtoA"
-    elif form["srcGenre"] == "jazz" and form["tarGenre"] == "classic":
-        model_name = "jazz_classic"
-        direction = "AtoB"
-    elif form["srcGenre"] == "classic" and form["tarGenre"] == "jazz":
-        model_name = "jazz_classic"
-        direction = "BtoA"
-    elif form["srcGenre"] == "classic" and form["tarGenre"] == "pop":
-        model_name = "classic_pop"
-        direction = "AtoB"
-    elif form["srcGenre"] == "pop" and form["tarGenre"] == "classic":
-        model_name = "classic_pop"
-        direction = "BtoA"
+    if form["model"] == "cyclegan":
+        model_name = None
+        direction = None
+        if form["srcGenre"] == "jazz" and form["tarGenre"] == "pop":
+            model_name = "jazz_pop"
+            direction = "AtoB"
+        elif form["srcGenre"] == "pop" and form["tarGenre"] == "jazz":
+            model_name = "jazz_pop"
+            direction = "BtoA"
+        elif form["srcGenre"] == "jazz" and form["tarGenre"] == "classic":
+            model_name = "jazz_classic"
+            direction = "AtoB"
+        elif form["srcGenre"] == "classic" and form["tarGenre"] == "jazz":
+            model_name = "jazz_classic"
+            direction = "BtoA"
+        elif form["srcGenre"] == "classic" and form["tarGenre"] == "pop":
+            model_name = "classic_pop"
+            direction = "AtoB"
+        elif form["srcGenre"] == "pop" and form["tarGenre"] == "classic":
+            model_name = "classic_pop"
+            direction = "BtoA"
+        else:
+            print("Unspported translate action!")
+            return ""
     else:
-        print("Unspported translate action!")
-        return ""
+        target_style = form["tarGenre"]
     
     basename = ""
     if form["type"] == "select":
@@ -96,17 +100,21 @@ def transform():
         fullname = input_folder + file.filename
         file.save(fullname)
 
-    if basename.endswith("mid") and form["model"] == "cyclegan":
+    if basename.endswith("mid"):
         # convert into npy
         convert_to_npy(input_folder + basename)
 
-    basename = basename[:-3] + "npy"
-    visualization.visualization(input_folder + basename, tmp_folder + "wav.png")
-
-    service.run_file(input_folder, output_folder, model_name, direction)
+    basename_npy = basename[:-3] + "npy"
+    visualization.visualization(input_folder + basename_npy, tmp_folder + "wav.png")
 
     b = pathlib.Path(basename)
     output_name = output_folder + b.stem + "_transfer.mid"
+    input_name = input_folder + basename
+
+    if form["model"] == "cyclegan":
+        service.run_file(input_folder, output_folder, model_name, direction)
+    else:
+        service.run_file(input_name, output_name, target_style)
 
     return json.dumps({
         "image": tmp_folder + "wav.png",
@@ -125,7 +133,7 @@ def static_music_list_cyclegan():
 def static_music_list_seq2seq():
     def findall(suf):
         return [str(s).replace("\\", "/") for s in pathlib.Path("static/music/seq2seq").glob("**/*." + suf)]
-    return json.dumps(findall("mid") + findall("npy"))
+    return json.dumps(findall("mid"))
 
 
 if __name__ == '__main__':
