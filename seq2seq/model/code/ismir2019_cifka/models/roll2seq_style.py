@@ -15,7 +15,7 @@ from museflow.nn.rnn import InputWrapper
 from museflow.trainer import BasicTrainer
 from museflow.vocabulary import Vocabulary
 
-from ismir2019_cifka.models.common import load_data
+from .common import load_data
 
 
 LOGGER = logging.getLogger('ismir2019_cifka')
@@ -144,7 +144,8 @@ class TranslationExperiment:
 
         self.input_encoding = self._cfg['input_encoding'].configure()
         self.output_encoding = self._cfg['output_encoding'].configure()
-        with open(self._cfg.get('style_list')) as f:
+        #with open(self._cfg.get('style_list')) as f:
+        with open("./seq2seq/data/parallel/styles") as f:
             style_list = [line.rstrip('\n') for line in f]
         self.style_vocabulary = Vocabulary(
             style_list, pad_token=None, start_token=None, end_token=None)
@@ -189,6 +190,7 @@ class TranslationExperiment:
     def run(self, args):
         self.trainer.load_variables(checkpoint_file=args.checkpoint)
         data = pickle.load(args.input_file)
+        #data = args.input_file
 
         def generator():
             style_id = self.style_vocabulary.to_id(args.target_style)
@@ -208,6 +210,7 @@ class TranslationExperiment:
                    for seq, (segment_id, _) in zip(output_ids, data)]
 
         pickle.dump(outputs, args.output_file)
+        #return outputs
 
 
 def main():
@@ -240,15 +243,16 @@ def main():
     args.func(experiment, args)
 
 
-def roll2seq_style(input_file, output_file):
+def roll2seq_style(input_file, output_file, model_str, target_style):
     parser = argparse.ArgumentParser()
     
-    parser.set_defaults(logdir="./experiments/all2bass")
+    parser.set_defaults(logdir="./seq2seq/model/experiments/"+model_str)
     parser.set_defaults(train_mode=False)
     parser.set_defaults(func=TranslationExperiment.run)
     parser.set_defaults(input_file=input_file, type=argparse.FileType('rb'), metavar='INPUTFILE')
+    #parser.set_defaults(input_file=input_file)
     parser.set_defaults(output_file=output_file, type=argparse.FileType('wb'), metavar='OUTPUTFILE')
-    parser.set_defaults(target_style="ZZREGGAE", type=str, metavar='STYLE')
+    parser.set_defaults(target_style=target_style, type=str, metavar='STYLE')
     parser.set_defaults(checkpoint=None, type=str)
     parser.set_defaults(batch_size=32, type=int)
     parser.set_defaults(sample=False)
@@ -261,6 +265,7 @@ def roll2seq_style(input_file, output_file):
     experiment = config.configure(TranslationExperiment,
                                   logdir=args.logdir, train_mode=args.train_mode)
     args.func(experiment, args)
+    #return args.func(experiment, args)
 
 
 if __name__ == '__main__':

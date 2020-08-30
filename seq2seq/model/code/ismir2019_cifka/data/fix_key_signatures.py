@@ -5,6 +5,7 @@ import argparse
 import collections
 import re
 import sys
+import os
 
 import mido
 
@@ -53,6 +54,9 @@ def main():
 
 def step1(input_file, output_file):
     mido.midifiles.meta.add_meta_spec(MetaSpec_key_signature)
+    
+    #if not os.path.exists(output_file):
+    #    os.mkdir(output_file)
 
     midi_file = mido.MidiFile(input_file)
 
@@ -70,6 +74,7 @@ def step1(input_file, output_file):
         if len(track) != original_len:
             print('Removed {} invalid messages'.format(original_len - len(track)), file=sys.stderr)
 
+    #return midi_file
     midi_file.save(output_file)
 
 

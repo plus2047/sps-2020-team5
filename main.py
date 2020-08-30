@@ -117,14 +117,14 @@ def transform():
 @app.route('/static_music_list_cyclegan', methods=["GET"])
 def static_music_list_cyclegan():
     def findall(suf):
-        return [str(s) for s in pathlib.Path("static/music/cyclegan").glob("**/*." + suf)]
+        return [str(s).replace("\\", "/") for s in pathlib.Path("static/music/cyclegan").glob("**/*." + suf)]
     return json.dumps(findall("mid") + findall("npy"))
 
 
 @app.route('/static_music_list_seq2seq', methods=["GET"])
 def static_music_list_seq2seq():
     def findall(suf):
-        return [str(s) for s in pathlib.Path("static/music/seq2seq").glob("**/*." + suf)]
+        return [str(s).replace("\\", "/") for s in pathlib.Path("static/music/seq2seq").glob("**/*." + suf)]
     return json.dumps(findall("mid") + findall("npy"))
 
 
