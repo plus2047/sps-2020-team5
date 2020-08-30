@@ -75,11 +75,11 @@ def transform():
     elif form["srcGenre"] == "classic" and form["tarGenre"] == "jazz":
         model_name = "jazz_classic"
         direction = "BtoA"
-    elif form["srcGenre"] == "pop" and form["tarGenre"] == "classic":
-        model_name = "pop_classic"
-        direction = "AtoB"
     elif form["srcGenre"] == "classic" and form["tarGenre"] == "pop":
-        model_name = "pop_classic"
+        model_name = "classic_pop"
+        direction = "AtoB"
+    elif form["srcGenre"] == "pop" and form["tarGenre"] == "classic":
+        model_name = "classic_pop"
         direction = "BtoA"
     else:
         print("Unspported translate action!")

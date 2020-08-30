@@ -4,10 +4,17 @@ import tensorflow as tf
 
 
 def get_all_args():  # get all supported model config
-    basic_args = process_args()
-    basic_args.checkpoint_dir = "cyclegan/checkpoint/JC_J2JC_C_2020-08-03_base_0.0/"
+    jc_args = process_args()
+    jc_args.checkpoint_dir = "cyclegan/checkpoint/JC_J2JC_C_2020-08-03_base_0.0/"
+    # cp_args = process_args()
+    # cp_args.checkpoint_dir = "cyclegan/checkpoint/CP_C2CP_P_2020-08-29_base_0.0/"
+    # jp_args = process_args()
+    # jp_args.checkpoint_dir = "cyclegan/checkpoint/JP_J2JP_P_2020-08-29_base_0.0/"
+
     return {
-        "jazz_classic": basic_args,
+        "jazz_classic": jc_args,
+        # "jazz_pop": jp_args,
+        # "classic_pop": cp_args
     }
 
 
